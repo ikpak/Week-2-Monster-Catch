@@ -26,6 +26,8 @@ let startTime = Date.now();
 const SECONDS_PER_ROUND = 30;
 let elapsedTime = 0;
 
+let score = 0;
+
 function loadImages() {
   bgImage = new Image();
   bgImage.onload = function () {
@@ -96,16 +98,32 @@ let update = function () {
 
 
   if (38 in keysDown) { // Player is holding up key
-    heroY -= 5;
+    heroY -= 4;
   }
   if (40 in keysDown) { // Player is holding down key
-    heroY += 5;
+    heroY += 4;
   }
   if (37 in keysDown) { // Player is holding left key
-    heroX -= 5;
+    heroX -= 4;
   }
   if (39 in keysDown) { // Player is holding right key
-    heroX += 5;
+    heroX += 4;
+  }
+
+
+// Make sure the character doesn't go beyond canvas parameters
+  if(heroX < 0) {
+    heroX = 0
+  } 
+  else if(heroX > canvas.width-32) {
+    heroX = canvas.width - 32
+  }
+
+  if(heroY < 0) {
+    heroY = 0
+  }
+  else if(heroY > canvas.height-32) {
+    heroY = canvas.height - 32
   }
 
   // Check if player and monster collided. Our images
@@ -118,8 +136,10 @@ let update = function () {
   ) {
     // Pick a new location for the monster.
     // Note: Change this to place the monster at a new, random location.
-    monsterX = monsterX + 50;
-    monsterY = monsterY + 70;
+    monsterX = Math.floor(Math.random()*(canvas.width-32));
+    monsterY = Math.floor(Math.random()*(canvas.height-32));
+
+    score++
   }
 };
 
@@ -137,6 +157,8 @@ var render = function () {
     ctx.drawImage(monsterImage, monsterX, monsterY);
   }
   ctx.fillText(`Seconds Remaining: ${SECONDS_PER_ROUND - elapsedTime}`, 20, 100);
+  
+  ctx.fillText(`Score: ${score}`, 20, 150);
 };
 
 /**
