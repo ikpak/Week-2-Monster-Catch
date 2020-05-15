@@ -19,12 +19,12 @@ canvas.width = 512;
 canvas.height = 480;
 document.body.appendChild(canvas);
 
-let bgReady, heroReady, monsterReady;
-let bgImage, heroImage, monsterImage;
+let bgReady, heroReady, cloverReady, appleReady;
+let bgImage, heroImage, cloverImage, appleImage;
 
-let startTime = Date.now();
-const SECONDS_PER_ROUND = 30;
-let elapsedTime = 0;
+// let startTime = Date.now();
+// const SECONDS_PER_ROUND = 30;
+// let elapsedTime = 0;
 
 let score = 0;
 
@@ -35,6 +35,7 @@ function loadImages() {
     bgReady = true;
   };
   bgImage.src = "images/background.png";
+  
   heroImage = new Image();
   heroImage.onload = function () {
     // show the hero image
@@ -42,12 +43,33 @@ function loadImages() {
   };
   heroImage.src = "images/hero.png";
 
-  monsterImage = new Image();
-  monsterImage.onload = function () {
+  cloverImage = new Image();
+  cloverImage.onload = function () {
     // show the monster image
-    monsterReady = true;
+    cloverReady = true;
   };
-  monsterImage.src = "images/monster.png";
+  cloverImage.src = "images/clover-icon.png";
+
+  appleImage = new Image();
+  appleImage.onload = function () {
+    //show apple image
+    appleReady = true;
+  }
+  appleImage.src = "images/apple-icon.png"
+
+  cloverImage = new Image();
+  cloverImage.onload = function () {
+    //show clover image
+    cloverReady = true;
+  }
+  cloverImage.src = "images/clover-icon.png"
+
+  bombImage = new Image();
+  bombImage.onload = function () {
+    //show bomb image
+    bombReady = true;
+  }
+  bombImage.src = "images/bomb-icon.png"
 }
 
 /** 
@@ -63,8 +85,11 @@ function loadImages() {
 let heroX = canvas.width / 2;
 let heroY = canvas.height / 2;
 
-let monsterX = 100;
-let monsterY = 100;
+let cloverX = Math.floor(Math.random()*(canvas.width-38));
+let cloverY = Math.floor(Math.random()*(canvas.width-42));
+
+let appleX = Math.floor(Math.random()*(canvas.width-38));
+let appleY = Math.floor(Math.random()*(canvas.width-38));
 
 /** 
  * Keyboard Listeners
@@ -94,20 +119,19 @@ function setupKeyboardListeners() {
  */
 let update = function () {
   // Update the time.
-  elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-
+  // elapsedTime = Math.floor((Date.now() - startTime) / 1000);
 
   if (38 in keysDown) { // Player is holding up key
-    heroY -= 4;
+    heroY -= 5;
   }
   if (40 in keysDown) { // Player is holding down key
-    heroY += 4;
+    heroY += 5;
   }
   if (37 in keysDown) { // Player is holding left key
-    heroX -= 4;
+    heroX -= 5;
   }
   if (39 in keysDown) { // Player is holding right key
-    heroX += 4;
+    heroX += 5;
   }
 
 
@@ -129,17 +153,30 @@ let update = function () {
   // Check if player and monster collided. Our images
   // are about 32 pixels big.
   if (
-    heroX <= (monsterX + 32)
-    && monsterX <= (heroX + 32)
-    && heroY <= (monsterY + 32)
-    && monsterY <= (heroY + 32)
+    heroX <= (cloverX + 32)
+    && cloverX <= (heroX + 38)
+    && heroY <= (cloverY + 32)
+    && cloverY <= (heroY + 42)
   ) {
     // Pick a new location for the monster.
     // Note: Change this to place the monster at a new, random location.
-    monsterX = Math.floor(Math.random()*(canvas.width-32));
-    monsterY = Math.floor(Math.random()*(canvas.height-32));
-
-    score++
+    // monsterX = Math.floor(Math.random()*(canvas.width-32));
+    // monsterY = Math.floor(Math.random()*(canvas.height-32));
+    cloverX = -50;
+    cloverY = -50;
+    cloverReady = false;
+    score = score + 10
+  }
+  else if (
+    heroX <= (appleX + 32)
+    && appleX <= (heroX + 38)
+    && heroY <= (appleY + 32)
+    && appleY <= (heroY + 38)
+  ) {
+    appleX = -50;
+    appleY = -50;
+    appleReady = false;
+    score = score + 5
   }
 };
 
@@ -153,12 +190,17 @@ var render = function () {
   if (heroReady) {
     ctx.drawImage(heroImage, heroX, heroY);
   }
-  if (monsterReady) {
-    ctx.drawImage(monsterImage, monsterX, monsterY);
+  if (cloverReady) {
+    ctx.drawImage(cloverImage, cloverX, cloverY);
   }
-  ctx.fillText(`Seconds Remaining: ${SECONDS_PER_ROUND - elapsedTime}`, 20, 100);
-  
+  if (appleReady) {
+    ctx.drawImage(appleImage, appleX, appleY)
+  }
+  // ctx.fillText(`Seconds Remaining: ${SECONDS_PER_ROUND - elapsedTime}`, 20, 100);
+
   ctx.fillText(`Score: ${score}`, 20, 150);
+
+  ctx.fillText(`Time remaining: ${count}`, 20, 100);
 };
 
 /**
@@ -166,6 +208,25 @@ var render = function () {
  * update (updates the state of the game, in this case our hero and monster)
  * render (based on the state of our game, draw the right things)
  */
+
+let count = 30
+let finished = false;
+let counter = function() {
+  count--
+  if(count <= 0) {
+    clearInterval(counter);
+    //set game to finished
+    finished = true;
+    count = 0;
+    // hide monster and hero
+    cloverReady = false;
+    appleReady = false;
+    heroReady = false
+  }
+};
+
+setInterval(counter, 1000);
+
 var main = function () {
   update(); 
   render();
@@ -173,6 +234,26 @@ var main = function () {
   // for web browsers. 
   requestAnimationFrame(main);
 };
+
+function reset() {
+  // Reset item's position
+  heroX = canvas.width / 2;
+  heroY = canvas.height / 2;
+  // Reset item's position
+  cloverX = Math.floor(Math.random()*(canvas.width-32));
+  cloverY = Math.floor(Math.random()*(canvas.width-32));
+  
+  appleX = Math.floor(Math.random()*(canvas.width-38));
+  appleY = Math.floor(Math.random()*(canvas.width-38));
+  // Reset item
+  count = 30;
+  // Reset score
+  score = 0;
+  // Load images, and start main function
+  loadImages();
+  setupKeyboardListeners();
+  main();
+}
 
 // Cross-browser support for requestAnimationFrame.
 // Safely ignore this line. It's mostly here for people with old web browsers.
