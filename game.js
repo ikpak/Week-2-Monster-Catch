@@ -15,12 +15,12 @@ let ctx;
 
 canvas = document.createElement("canvas");
 ctx = canvas.getContext("2d");
-canvas.width = 512;
-canvas.height = 480;
+canvas.width = 500;
+canvas.height = 500;
 document.body.appendChild(canvas);
 
-let bgReady, heroReady, cloverReady, appleReady;
-let bgImage, heroImage, cloverImage, appleImage;
+let bgReady, chocoboReady, cloverReady, appleReady;
+let bgImage, chocoboImage, cloverImage, appleImage;
 
 // let startTime = Date.now();
 // const SECONDS_PER_ROUND = 30;
@@ -34,14 +34,14 @@ function loadImages() {
     // show the background image
     bgReady = true;
   };
-  bgImage.src = "images/background.png";
+  bgImage.src = "images/bg.jpg";
   
-  heroImage = new Image();
-  heroImage.onload = function () {
+  chocoboImage = new Image();
+  chocoboImage.onload = function () {
     // show the hero image
-    heroReady = true;
+    chocoboReady = true;
   };
-  heroImage.src = "images/hero.png";
+  chocoboImage.src = "images/front-chocobo-icon.png";
 
   cloverImage = new Image();
   cloverImage.onload = function () {
@@ -82,14 +82,14 @@ function loadImages() {
  * The same applies to the monster.
  */
 
-let heroX = canvas.width / 2;
-let heroY = canvas.height / 2;
+let chocoboX = (canvas.width-52) / 2;
+let chocoboY = canvas.height - 115;
 
 let cloverX = Math.floor(Math.random()*(canvas.width-38));
-let cloverY = Math.floor(Math.random()*(canvas.width-42));
+let cloverY = 0;
 
 let appleX = Math.floor(Math.random()*(canvas.width-38));
-let appleY = Math.floor(Math.random()*(canvas.width-38));
+let appleY = 0;
 
 /** 
  * Keyboard Listeners
@@ -121,42 +121,42 @@ let update = function () {
   // Update the time.
   // elapsedTime = Math.floor((Date.now() - startTime) / 1000);
 
-  if (38 in keysDown) { // Player is holding up key
-    heroY -= 5;
-  }
-  if (40 in keysDown) { // Player is holding down key
-    heroY += 5;
-  }
+  // if (38 in keysDown) { // Player is holding up key
+  //   chocoboY -= 5;
+  // }
+  // if (40 in keysDown) { // Player is holding down key
+  //   chocoboY += 5;
+  // }
   if (37 in keysDown) { // Player is holding left key
-    heroX -= 5;
+    chocoboX -= 5;
   }
   if (39 in keysDown) { // Player is holding right key
-    heroX += 5;
+    chocoboX += 5;
   }
 
 
 // Make sure the character doesn't go beyond canvas parameters
-  if(heroX < 0) {
-    heroX = 0
+  if(chocoboX < 0) {
+    chocoboX = 0
   } 
-  else if(heroX > canvas.width-32) {
-    heroX = canvas.width - 32
+  else if(chocoboX > canvas.width-52) {
+    chocoboX = canvas.width - 52
   }
 
-  if(heroY < 0) {
-    heroY = 0
-  }
-  else if(heroY > canvas.height-32) {
-    heroY = canvas.height - 32
-  }
+  // if(chocoboY < 0) {
+  //   chocoboY = 0
+  // }
+  // else if(chocoboY > canvas.height-32) {
+  //   chocoboY = canvas.height - 32
+  // }
 
   // Check if player and monster collided. Our images
   // are about 32 pixels big.
   if (
-    heroX <= (cloverX + 32)
-    && cloverX <= (heroX + 38)
-    && heroY <= (cloverY + 32)
-    && cloverY <= (heroY + 42)
+    chocoboX <= (cloverX + 32)
+    && cloverX <= (chocoboX + 38)
+    && chocoboY <= (cloverY + 32)
+    && cloverY <= (chocoboY + 42)
   ) {
     // Pick a new location for the monster.
     // Note: Change this to place the monster at a new, random location.
@@ -168,10 +168,10 @@ let update = function () {
     score = score + 10
   }
   else if (
-    heroX <= (appleX + 32)
-    && appleX <= (heroX + 38)
-    && heroY <= (appleY + 32)
-    && appleY <= (heroY + 38)
+    chocoboX <= (appleX + 32)
+    && appleX <= (chocoboX + 38)
+    && chocoboY <= (appleY + 32)
+    && appleY <= (chocoboY + 38)
   ) {
     appleX = -50;
     appleY = -50;
@@ -187,8 +187,8 @@ var render = function () {
   if (bgReady) {
     ctx.drawImage(bgImage, 0, 0);
   }
-  if (heroReady) {
-    ctx.drawImage(heroImage, heroX, heroY);
+  if (chocoboReady) {
+    ctx.drawImage(chocoboImage, chocoboX, chocoboY);
   }
   if (cloverReady) {
     ctx.drawImage(cloverImage, cloverX, cloverY);
@@ -221,7 +221,7 @@ let counter = function() {
     // hide monster and hero
     cloverReady = false;
     appleReady = false;
-    heroReady = false
+    chocoboReady = false
   }
 };
 
@@ -237,14 +237,14 @@ var main = function () {
 
 function reset() {
   // Reset item's position
-  heroX = canvas.width / 2;
-  heroY = canvas.height / 2;
+  chocoboX = canvas.width / 2;
+  chocoboY = canvas.height / 2;
   // Reset item's position
   cloverX = Math.floor(Math.random()*(canvas.width-32));
-  cloverY = Math.floor(Math.random()*(canvas.width-32));
+  cloverY = Math.floor(Math.random()*(canvas.height-32));
   
   appleX = Math.floor(Math.random()*(canvas.width-38));
-  appleY = Math.floor(Math.random()*(canvas.width-38));
+  appleY = Math.floor(Math.random()*(canvas.height-38));
   // Reset item
   count = 30;
   // Reset score
