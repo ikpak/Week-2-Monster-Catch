@@ -15,7 +15,7 @@ let ctx;
 
 canvas = document.createElement("canvas");
 ctx = canvas.getContext("2d");
-canvas.width = 500;
+canvas.width = 350;
 canvas.height = 500;
 document.body.appendChild(canvas);
 
@@ -34,8 +34,9 @@ function loadImages() {
     // show the background image
     bgReady = true;
   };
-  bgImage.src = "images/bg.jpg";
+  bgImage.src = "images/bg-new.jpg";
   
+  // chocobo image 52px x 103px
   chocoboImage = new Image();
   chocoboImage.onload = function () {
     // show the hero image
@@ -50,6 +51,7 @@ function loadImages() {
   };
   cloverImage.src = "images/clover-icon.png";
 
+  // apple image 30px x 30px
   appleImage = new Image();
   appleImage.onload = function () {
     //show apple image
@@ -57,6 +59,7 @@ function loadImages() {
   }
   appleImage.src = "images/apple-icon.png"
 
+  // clover image 27px x 30px
   cloverImage = new Image();
   cloverImage.onload = function () {
     //show clover image
@@ -64,6 +67,7 @@ function loadImages() {
   }
   cloverImage.src = "images/clover-icon.png"
 
+  // bomb image 27px x 30px
   bombImage = new Image();
   bombImage.onload = function () {
     //show bomb image
@@ -85,11 +89,12 @@ function loadImages() {
 let chocoboX = (canvas.width-52) / 2;
 let chocoboY = canvas.height - 115;
 
-let cloverX = Math.floor(Math.random()*(canvas.width-38));
-let cloverY = 0;
+let cloverX = Math.floor(Math.random()*(canvas.width-27));
+let cloverY = -150;
 
-let appleX = Math.floor(Math.random()*(canvas.width-38));
-let appleY = 0;
+let appleX = Math.floor(Math.random()*(canvas.width-30));
+let appleY = -50;
+
 
 /** 
  * Keyboard Listeners
@@ -134,6 +139,19 @@ let update = function () {
     chocoboX += 5;
   }
 
+  cloverY += 2.5;
+
+  appleY += 2.5;
+
+  if(appleY == canvas.height) {
+    appleX = Math.floor(Math.random()*(canvas.width-30));
+    appleY = -50;
+    
+  }
+  else if(cloverY == canvas.height) {
+    cloverX = Math.floor(Math.random()*(canvas.width-38));
+    cloverY = -150;
+  }
 
 // Make sure the character doesn't go beyond canvas parameters
   if(chocoboX < 0) {
@@ -153,29 +171,29 @@ let update = function () {
   // Check if player and monster collided. Our images
   // are about 32 pixels big.
   if (
-    chocoboX <= (cloverX + 32)
-    && cloverX <= (chocoboX + 38)
-    && chocoboY <= (cloverY + 32)
-    && cloverY <= (chocoboY + 42)
+    chocoboX <= (cloverX + 27)
+    && cloverX <= (chocoboX + 52)
+    && chocoboY <= (cloverY + 30)
+    && cloverY <= (chocoboY + 103)
   ) {
     // Pick a new location for the monster.
     // Note: Change this to place the monster at a new, random location.
     // monsterX = Math.floor(Math.random()*(canvas.width-32));
     // monsterY = Math.floor(Math.random()*(canvas.height-32));
-    cloverX = -50;
-    cloverY = -50;
-    cloverReady = false;
+    cloverX = Math.floor(Math.random()*(canvas.width-38));
+    cloverY = -150;
+    // cloverReady = false;
     score = score + 10
   }
   else if (
-    chocoboX <= (appleX + 32)
-    && appleX <= (chocoboX + 38)
-    && chocoboY <= (appleY + 32)
-    && appleY <= (chocoboY + 38)
+    chocoboX <= (appleX + 30)
+    && appleX <= (chocoboX + 52)
+    && chocoboY <= (appleY + 30)
+    && appleY <= (chocoboY + 103)
   ) {
-    appleX = -50;
+    appleX = Math.floor(Math.random()*(canvas.width-30));
     appleY = -50;
-    appleReady = false;
+    // appleReady = false;
     score = score + 5
   }
 };
@@ -234,26 +252,6 @@ var main = function () {
   // for web browsers. 
   requestAnimationFrame(main);
 };
-
-function reset() {
-  // Reset item's position
-  chocoboX = canvas.width / 2;
-  chocoboY = canvas.height / 2;
-  // Reset item's position
-  cloverX = Math.floor(Math.random()*(canvas.width-32));
-  cloverY = Math.floor(Math.random()*(canvas.height-32));
-  
-  appleX = Math.floor(Math.random()*(canvas.width-38));
-  appleY = Math.floor(Math.random()*(canvas.height-38));
-  // Reset item
-  count = 30;
-  // Reset score
-  score = 0;
-  // Load images, and start main function
-  loadImages();
-  setupKeyboardListeners();
-  main();
-}
 
 // Cross-browser support for requestAnimationFrame.
 // Safely ignore this line. It's mostly here for people with old web browsers.
