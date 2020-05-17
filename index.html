@@ -2,12 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Game Title</title>
+    <title>Chocobo Chronicles</title>
+
+    <!-- Bootstrap -->
+    <link
+  rel="stylesheet"
+  crossorigin="anonymous"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+/>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome-->
+    <link
+rel="stylesheet"
+crossorigin="anonymous"
+href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+/>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   </head>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+
   <body>
-    <div>
+    <div class="container">
+      <header>
+          <image src="images/title.png" alt="game title" />
+      </header>
+
+      <section class="instructions">
+          <h3>HOW TO PLAY</h3>
+          <p>
+            Use left and right arrow keys to move chocobo and collect apples. 
+            Catch clovers to get extra points, and be careful, do not touch bombs...
+          </p>
+      </section>
+
+      <section class="data">
+          <ul style="list-style-type:none;">
+            <li id="timeArea"></li>
+            <li id="scoreArea"></li>
+            <li id="highscoreArea"></li>
+          </ul>
+      </section>
+
+      <audio id="bgMusic" autoplay="autoplay" loop="true">
+        <source src="audio/background-music.mp3" type="audio/mp3">
+      </audio>
+    
+      <section class="volume-icon">
+        <i class="fas fa-volume-up fa-2x" onclick="document.getElementById('bgMusic').play()"></i>
+        <i class="fas fa-volume-mute fa-2x" onclick="document.getElementById('bgMusic').pause()"></i>
+      </section>
+
       <button onclick="reset()">Reset</button>
-    </div>
+
+    <audio id="gameoverSound"><source src="audio/explosion.mp3" /></audio>
+    <audio id="appleSound"><source src="audio/chocobo-apple.mp3" /></audio>
+    <audio id="cloverSound"><source src="audio/chocobo-clover.mp3" /></audio>
+
     <script src="game.js"></script>
   </body>
 </html>

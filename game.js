@@ -19,14 +19,21 @@ canvas.width = 350;
 canvas.height = 500;
 document.body.appendChild(canvas);
 
-let bgReady, chocoboReady, cloverReady, appleReady;
-let bgImage, chocoboImage, cloverImage, appleImage;
+canvas.style = "position:absolute; left: 50%; width: 350px; margin-left: 100px; top: 20%";
+
+let bgReady, chocoboReady, cloverReady, appleReady, appletwoReady, applethreeReady, bombReady;
+let bgImage, chocoboImage, cloverImage, appleImage, appletwoImage, applethreeImage, bombImage;
 
 // let startTime = Date.now();
 // const SECONDS_PER_ROUND = 30;
 // let elapsedTime = 0;
 
+const gameoverSound = document.getElementById("gameoverSound");
+const appleSound = document.getElementById("appleSound");
+
 let score = 0;
+
+let highScore = localStorage.getItem("userhighscore") || 0;
 
 function loadImages() {
   bgImage = new Image();
@@ -44,13 +51,6 @@ function loadImages() {
   };
   chocoboImage.src = "images/front-chocobo-icon.png";
 
-  cloverImage = new Image();
-  cloverImage.onload = function () {
-    // show the monster image
-    cloverReady = true;
-  };
-  cloverImage.src = "images/clover-icon.png";
-
   // apple image 30px x 30px
   appleImage = new Image();
   appleImage.onload = function () {
@@ -58,6 +58,20 @@ function loadImages() {
     appleReady = true;
   }
   appleImage.src = "images/apple-icon.png"
+
+  appletwoImage = new Image();
+  appletwoImage.onload = function () {
+    //show apple image
+    appletwoReady = true;
+  }
+  appletwoImage.src = "images/apple-icon.png"
+
+  applethreeImage = new Image();
+  applethreeImage.onload = function () {
+    //show apple image
+    applethreeReady = true;
+  }
+  applethreeImage.src = "images/apple-icon.png"
 
   // clover image 27px x 30px
   cloverImage = new Image();
@@ -88,12 +102,24 @@ function loadImages() {
 
 let chocoboX = (canvas.width-52) / 2;
 let chocoboY = canvas.height - 115;
+// let chocobo = {
+//   speed: 5
+// };
 
 let cloverX = Math.floor(Math.random()*(canvas.width-27));
-let cloverY = -150;
+let cloverY = -350;
 
 let appleX = Math.floor(Math.random()*(canvas.width-30));
 let appleY = -50;
+
+let appletwoX = Math.floor(Math.random()*(canvas.width-30));
+let appletwoY = -150;
+
+let applethreeX = Math.floor(Math.random()*(canvas.width-30));
+let applethreeY = -250;
+
+let bombX = Math.floor(Math.random()*(canvas.width-27));
+let bombY = -450; 
 
 
 /** 
@@ -143,14 +169,32 @@ let update = function () {
 
   appleY += 2.5;
 
+  appletwoY += 2.5;
+
+  applethreeY += 2.5;
+
+  bombY += 2.5;
+
   if(appleY == canvas.height) {
     appleX = Math.floor(Math.random()*(canvas.width-30));
     appleY = -50;
     
   }
+  else if(appletwoY == canvas.height) {
+    appletwoX = Math.floor(Math.random()*(canvas.width-30));
+    appletwoY = -150; 
+  }
+  else if(applethreeY == canvas.height) {
+    applethreeX = Math.floor(Math.random()*(canvas.width-30));
+    applethreeY = -250;
+  }
   else if(cloverY == canvas.height) {
-    cloverX = Math.floor(Math.random()*(canvas.width-38));
-    cloverY = -150;
+    cloverX = Math.floor(Math.random()*(canvas.width-27));
+    cloverY = -350;
+  }
+  else if(bombY == canvas.height) {
+    bombY = Math.floor(Math.random()*(canvas.width-30));
+    bombY = -450;
   }
 
 // Make sure the character doesn't go beyond canvas parameters
@@ -181,9 +225,10 @@ let update = function () {
     // monsterX = Math.floor(Math.random()*(canvas.width-32));
     // monsterY = Math.floor(Math.random()*(canvas.height-32));
     cloverX = Math.floor(Math.random()*(canvas.width-38));
-    cloverY = -150;
+    cloverY = -350;
     // cloverReady = false;
-    score = score + 10
+    score = score + 10;
+    cloverSound.play();
   }
   else if (
     chocoboX <= (appleX + 30)
@@ -194,7 +239,57 @@ let update = function () {
     appleX = Math.floor(Math.random()*(canvas.width-30));
     appleY = -50;
     // appleReady = false;
-    score = score + 5
+    score = score + 5;
+    appleSound.play();
+  }
+  else if (
+    chocoboX <= (appletwoX + 30)
+    && appletwoX <= (chocoboX + 52)
+    && chocoboY <= (appletwoY + 30)
+    && appletwoY <= (chocoboY + 103)
+  ) {
+    appletwoX = Math.floor(Math.random()*(canvas.width-30));
+    appletwoY = -50;
+    // appleReady = false;
+    score = score + 5;
+    appleSound.play();
+  }
+  else if (
+    chocoboX <= (applethreeX + 30)
+    && applethreeX <= (chocoboX + 52)
+    && chocoboY <= (applethreeY + 30)
+    && applethreeY <= (chocoboY + 103)
+  ) {
+    applethreeX = Math.floor(Math.random()*(canvas.width-30));
+    applethreeY = -50;
+    // appleReady = false;
+    score = score + 5;
+    appleSound.play();
+  }
+  else if (
+    chocoboX <= (bombX + 27)
+    && bombX <= (chocoboX + 52)
+    && chocoboY <= (bombY + 30)
+    && bombY <= (chocoboY + 103) 
+  ) {
+    finished = true;
+    count = 0;
+    // hide monster and hero
+    cloverReady = false;
+    appleReady = false;
+    appletwoReady = false;
+    applethreeReady = false;
+    chocoboReady = false;
+    bombReady = false;
+    // move hero out of canvas
+    chocoboX = -600;
+    chocoboY = -600;
+    gameoverSound.play();
+  }
+
+  if(score > highScore) {
+    highScore = score
+    localStorage.setItem("userhighscore", highScore);
   }
 };
 
@@ -212,13 +307,29 @@ var render = function () {
     ctx.drawImage(cloverImage, cloverX, cloverY);
   }
   if (appleReady) {
-    ctx.drawImage(appleImage, appleX, appleY)
+    ctx.drawImage(appleImage, appleX, appleY);
+  }
+  if (appletwoReady) {
+    ctx.drawImage(appletwoImage, appletwoX, appletwoY);
+  }
+  if (applethreeReady) {
+    ctx.drawImage(applethreeImage, applethreeX, applethreeY);
+  }
+  if (bombReady) {
+    ctx.drawImage(bombImage, bombX, bombY);
   }
   // ctx.fillText(`Seconds Remaining: ${SECONDS_PER_ROUND - elapsedTime}`, 20, 100);
 
-  ctx.fillText(`Score: ${score}`, 20, 150);
+  document.getElementById("scoreArea").innerHTML = `Score: ${score}`
 
-  ctx.fillText(`Time remaining: ${count}`, 20, 100);
+  document.getElementById("timeArea").innerHTML = `Time Remaining: ${count}`
+
+  document.getElementById("highscoreArea").innerHTML = `High Score: ${highScore}`
+
+  if(finished == true) {
+    ctx.font = "25px 'Press Start 2P', cursive"
+    ctx.fillText(`Game Over`, 72, 250);
+  }
 };
 
 /**
@@ -239,7 +350,13 @@ let counter = function() {
     // hide monster and hero
     cloverReady = false;
     appleReady = false;
-    chocoboReady = false
+    appletwoReady = false;
+    applethreeReady = false;
+    chocoboReady = false;
+    bombReady = false;
+    // move hero out of canvas
+    chocoboX = -600;
+    chocoboY = -600;
   }
 };
 
@@ -262,3 +379,33 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 loadImages();
 setupKeyboardListeners();
 main();
+
+function reset() {
+  count = 30;
+  score = 0;
+  finished = false;
+  cloverReady = true;
+  appleReady = true;
+  appletwoReady = true;
+  applethreeReady = true;
+  chocoboReady = true;
+  bombReady = true;
+  // reset chocobo position
+  chocoboX = (canvas.width-52) / 2;
+  chocoboY = canvas.height - 115;
+  // reset apple position
+  cloverX = Math.floor(Math.random()*(canvas.width-27));
+  cloverY = -350;
+  // reset apple position
+  appleX = Math.floor(Math.random()*(canvas.width-30));
+  appleY = -50;
+  // reset appletwo position
+  appletwoX = Math.floor(Math.random()*(canvas.width-30));
+  appletwoY = -150;
+  // reset applethree position
+  applethreeX = Math.floor(Math.random()*(canvas.width-30));
+  applethreeY = -250;
+  // reset bomb position
+  bombX = Math.floor(Math.random()*(canvas.width-27));
+  bombY = -450; 
+}
